@@ -4,6 +4,7 @@ import { Footer } from "../components/Footer";
 import { Outlet } from "react-router";
 import { SideBar } from "../components/SideBar";
 
+
 export default function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -26,7 +27,7 @@ export default function MainLayout() {
             </button>
           </div>
           <div className="flex-1">
-            <span className="text-xl font-bold">BookingApp</span>
+            <span className="text-xl font-bold">Booking App</span>
           </div>
         </div>
       </div>
@@ -43,9 +44,9 @@ export default function MainLayout() {
         
         {/* Main Content */}
         <main className="flex-1 bg-base-200 p-4 lg:p-8 overflow-auto">
-          <div className="max-w-7xl mx-auto">
+         
             <Outlet />
-          </div>
+        
         </main>
       </div>
       

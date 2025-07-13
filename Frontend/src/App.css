@@ -1,5 +1,31 @@
+@import url('datatables.net-dt');
+@import url('datatables.net-buttons-dt');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wdth,wght@62.5..100,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
+
+@theme{
+  font-notosans: 'Noto Sans', sans-serif,"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@config '../tailwind.config.js';
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 @plugin "daisyui" {
   themes: light, dark;
 }
+.fc-event {
+  cursor: pointer !important;
+}
 
+.opacity-1 {
+     opacity: 100%;
+ }
+ input[type="radio"]:checked + span {
+  display: block;
+}
+
+@layer base {
+  html {
+    @apply font-notosans font-semibold;
+ 
+  }
+}

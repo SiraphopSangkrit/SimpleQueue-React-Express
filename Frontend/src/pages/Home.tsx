@@ -29,19 +29,19 @@ export function Home() {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="flex lg:flex-row flex-col justify-start items-center max-h-fit gap-4 ">
-        <BoxContent className="max-w-md text-center max-w-md" >
+        <BoxContent className="max-w-md text-center w-full " >
             <p className="card-title justify-center">ยอดจองทั้งหมด</p>
           <p className="text-4xl font-bold text-primary mb-2">6</p>
           <p className="text-base-content/70">รายการ</p>
         </BoxContent>
 
-        <BoxContent className="max-w-md text-center max-w-md">
+        <BoxContent className="max-w-md text-center w-full">
              <p className="card-title justify-center">ยอดยกเลิก</p>
           <p className="text-4xl font-bold text-error mb-2">2</p>
           <p className="text-base-content/70">รายการ</p>
         </BoxContent>
 
-        <BoxContent className="max-w-md text-center max-w-md">
+        <BoxContent className="max-w-md text-center w-full">
         <p className="card-title justify-center">รอดำเนินการ</p>
           <p className="text-4xl font-bold text-warning mb-2">4</p>
           <p className="text-base-content/70">รายการ</p>

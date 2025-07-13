@@ -4,7 +4,7 @@ export function Navbar() {
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <p className="text-xl">Booking App</p>
       </div>
       <div className="flex-none gap-5 flex items-center">
         <ThemeToggle />
