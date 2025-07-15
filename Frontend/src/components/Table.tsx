@@ -8,7 +8,7 @@ import "datatables.net-buttons/js/buttons.print.mjs";
 DataTable.use(DT);
 
 export function Table() {
-  const [tableData, setTableData] = useState([
+  const [tableData] = useState([
     ["Tiger Nixon", "System Architect", "asdasda"],
     ["Garrett Winters", "Accountant", "asdasda33"],
   ]);

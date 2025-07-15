@@ -1,7 +1,7 @@
 import { Calendar } from "../components/Calendar";
 import { BookingModal } from "../components/Modals/BookingModal";
 import Datepicker from "react-tailwindcss-datepicker";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Input } from "../components/Inputs/Input";
 import { BoxSelect } from "../components/BoxSelect";

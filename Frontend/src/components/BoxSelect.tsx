@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 
 interface BoxContentProps {
   id?: string;
@@ -7,10 +6,10 @@ interface BoxContentProps {
   name?: string;
   checked?: boolean;
   onChange?: (value: string) => void;
-  reset?: boolean; // Add reset prop
+
 }
 
-export function BoxSelect({ id, startTime, endTime, name, checked, onChange, reset }: BoxContentProps) {
+export function BoxSelect({ id, startTime, endTime, name, checked, onChange }: BoxContentProps) {
   return (
     <div>
       <label

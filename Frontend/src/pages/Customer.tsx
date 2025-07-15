@@ -1,6 +1,5 @@
 import { Table } from "../components/Table";
-import { CustomerModal } from "../components/Modals/CustomerModal";
-import { Input } from "../components/Inputs/Input";
+
 
 export function Customer() {
   return (
