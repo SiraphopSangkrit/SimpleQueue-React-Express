@@ -1,7 +1,7 @@
 import { Card } from "../../components/Card";
 import { Input } from "../../components/Inputs/Input";
 import  Datepicker from "react-tailwindcss-datepicker";
-import { useState,useEffect, use } from "react";
+import { useState} from "react";
 import { BoxSelect } from "../../components/BoxSelect";
 import { Label } from "../../components/Inputs/Label";
 
