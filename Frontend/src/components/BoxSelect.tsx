@@ -14,9 +14,9 @@ export function BoxSelect({ id, startTime, endTime, name, checked, onChange }: B
     <div>
       <label
         htmlFor={id}
-        className="relative flex flex-col bg-white p-3 rounded-lg shadow-md cursor-pointer"
+        className="relative flex flex-col bg-base-200 p-3 rounded-lg shadow-md cursor-pointer border border-gray-300 hover:border-green-500 transition duration-200"
       >
-        <span className="font-bold text-gray-700">
+        <span className="font-bold text-gray-700 dark:text-gray-300">
           <span className="text-base">{startTime}</span>
           <span className="text-base"> - </span>
           <span className="text-base">{endTime}</span>

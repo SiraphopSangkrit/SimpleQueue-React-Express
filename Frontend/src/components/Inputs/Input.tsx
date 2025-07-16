@@ -1,3 +1,4 @@
+import { Label } from "./Label";
 export function Input({
   label,
   value,
@@ -19,16 +20,14 @@ export function Input({
 }) {
   return (
     <div className={`w-full ${boxClassName}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label}
-      </label>
+      <Label label={label} className="mb-2" />
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         name={name}
-        className={`w-full input ${className}`}
+        className={`w-full input ${className}  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
       />
     </div>
   );

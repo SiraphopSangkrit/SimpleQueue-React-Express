@@ -1,6 +1,6 @@
 import { type ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router";
-import {UserIcon,BookOpenIcon} from "@heroicons/react/24/outline";
+import {UsersIcon,BookOpenIcon} from "@heroicons/react/24/outline";
 
 interface SideBarProps {
   isOpen?: boolean;
@@ -60,7 +60,7 @@ export function SideBar({ isOpen = true, onClose, totalBookings = "" }: SideBarP
     {
       label: "ลูกค้า",
       icon: (
-        <UserIcon className="w-5 h-5" />
+        <UsersIcon className="w-5 h-5" />
       ),
       path: "/customers",
         children: [
@@ -70,9 +70,9 @@ export function SideBar({ isOpen = true, onClose, totalBookings = "" }: SideBarP
           path: "/users/bookings"
         },
         {
-          label: "ประวัติการจอง",
+          label: "รายชื่อลูกค้า",
           icon: '',
-          path: "/users/bookings/history"
+          path: "/"
         }
       ]
     },
@@ -204,7 +204,7 @@ export function SideBar({ isOpen = true, onClose, totalBookings = "" }: SideBarP
          fixed lg:static inset-y-0 left-0 z-50
         w-64 bg-base-200 transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        flex flex-col
+        flex flex-col shadow-[6px_0px_8px_0px_rgba(0,_0,_0,_0.1)]
       `}>
         {/* Header */}
         <div className="navbar bg-base-100 min-h-16 px-4 shadow-sm lg:hidden">

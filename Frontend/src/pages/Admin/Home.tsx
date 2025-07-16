@@ -1,5 +1,5 @@
-import { BoxContent } from "../components/BoxContent";
-import {  LineChart } from "../components/Chart";
+import { BoxContent } from "../../components/BoxContent";
+import {  LineChart } from "../../components/Chart";
 
 export function Home() {
 

@@ -1,16 +1,17 @@
 import { createBrowserRouter } from "react-router";
-import MainLayout from "./layout/MainLayout";
-import { Home } from "./pages/Home";
+import AdminLayout from "./layout/AdminLayout";
+import { Home } from "./pages/Admin/Home";
 import { NotFound } from "./pages/404";
-import { Booking } from "./pages/Booking";
-import { Customer } from "./pages/Customer";
+import { Booking } from "./pages/Admin/Booking";
+import { Customer } from "./pages/Admin/Customer";
 import UserLayout from "./layout/UserLayout";
 import { UserBooking } from "./pages/Users/UserBooking";
+import  {General} from "./pages/Admin/Settings/General";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: <AdminLayout/>,
     errorElement: <NotFound />,
     children: [
       {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
         path: "customers",
         element: <Customer />,
       },
+      {
+        path:"settings/general",
+        element: <General />,
+      }
     ],
   },
   {
