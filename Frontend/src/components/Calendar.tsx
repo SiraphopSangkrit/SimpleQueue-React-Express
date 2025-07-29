@@ -3,6 +3,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import googleCalendarPlugin from "@fullcalendar/google-calendar";
 import thLocale from "@fullcalendar/core/locales/th";
 import type { EventClickArg } from "@fullcalendar/core";
+import { CustomerModal } from "./Modals/CustomerModal";
 
 export interface CalendarEvent {
   _id: string;
@@ -21,11 +22,37 @@ export interface CalendarProps {
   data: CalendarEvent[];
 }
 
+
 export function Calendar({data}: CalendarProps) {
+
   const handleEventClick = (clickInfo: EventClickArg) => {
 
-    // Handle event click here
-    console.log("Event clicked:", clickInfo.event.title);
+    const event = clickInfo.event;
+    const extendedProps = event.extendedProps;
+
+
+    const modal = document.getElementById("booking-detail-modal") as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+      const modalContent = modal.querySelector(".modal-box");
+      if (modalContent) {
+        modalContent.innerHTML = `
+          <h1 class="text-lg font-bold">${extendedProps.customerName}</h1>
+          <p>Queue Number: ${extendedProps.queueNumber}</p>
+          <p>Service Type: ${extendedProps.serviceType}</p>
+           <p>Date: ${event.startStr || event.start?.toDateString() || 'N/A'}</p>
+          <p>Time Slot: ${extendedProps.timeSlot}</p>
+          <p>Status: ${extendedProps.status}</p>
+          
+        `;
+      }
+      const closeButton = modal.querySelector("button");
+      if (closeButton) {
+        closeButton.onclick = () => {
+          modal.close();
+        };
+      }
+    }
   };
   const getColorByStatus = (status: string) => {
     switch (status) {
@@ -58,6 +85,7 @@ export function Calendar({data}: CalendarProps) {
   const allEvents = [ ...calendarEvents];
 
   return (
+    <>
     <FullCalendar
       plugins={[dayGridPlugin, googleCalendarPlugin]}
       initialView="dayGridMonth"
@@ -78,5 +106,9 @@ export function Calendar({data}: CalendarProps) {
         }
       ]}
     />
+    <CustomerModal id="booking-detail-modal">
+     <div className="modal-content"></div>
+      </CustomerModal>
+    </>
   );
 }

@@ -29,3 +29,23 @@ export const createQueue = async (data: UserBookingProps) => {
       throw error;
     }
   }
+  export const getQueuesStats = async () => {
+    try {
+      const response = await axios.get("/api/queues/stats");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching queues stats:", error);
+      throw error;
+    }
+  }
+  export const getQueueByMonth = async () => {
+    try {
+      const response = await axios.get("/api/queues/month/weeks");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching queues by month:", error);
+      throw error;
+    }
+
+  }
+  

@@ -1,24 +1,27 @@
 const express = require('express');
-const queueRouter = express.Router();
-
+const router = express.Router();
 const QueueController = require('../Controllers/QueueController');
-
-// Create instance of QueueController
 const queueController = new QueueController();
 
-// Basic CRUD operations
-queueRouter.get('/', queueController.getAllQueues);
-queueRouter.get('/:id', queueController.getQueueById);
-queueRouter.post('/create', queueController.createQueue);
-queueRouter.put('/update/:id', queueController.updateQueue);
-queueRouter.delete('/delete/:id', queueController.deleteQueue);
+// Put specific routes BEFORE parameterized routes
+router.get('/stats', queueController.getQueueStats);
+router.get('/today', queueController.getTodaysQueues);
+router.get('/next', queueController.getNextQueue);
+router.get('/weekend', queueController.getQueuesByWeekend);
+router.get('/weekend/:week/:year', queueController.getQueuesForWeekend);
+router.get('/week', queueController.getQueuesByWeek);
+router.get('/week/:week/:year', queueController.getQueuesByWeekNumber);
+router.get('/status/:status', queueController.getQueuesByStatus);
+router.get('/month/weeks', queueController.getQueuesByMonthSplitByWeek);
+router.get('/month/iso-weeks', queueController.getQueuesByMonthWithISOWeeks);
 
-// Queue management routes
-queueRouter.patch('/:id/status', queueController.updateQueueStatus);
-queueRouter.get('/status/:status', queueController.getQueuesByStatus);
-queueRouter.get('/today/list', queueController.getTodaysQueues);
-queueRouter.get('/stats/overview', queueController.getQueueStats);
-queueRouter.get('/next/waiting', queueController.getNextQueue);
+// Put parameterized routes AFTER specific routes
+router.get('/:id', queueController.getQueueById);
+router.post('/', queueController.createQueue);
+router.put('/:id', queueController.updateQueue);
+router.patch('/:id/status', queueController.updateQueueStatus);
+router.delete('/:id', queueController.deleteQueue);
+router.get('/', queueController.getAllQueues);
 
-module.exports = queueRouter;
+module.exports = router;
 
