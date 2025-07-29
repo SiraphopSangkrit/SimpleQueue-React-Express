@@ -1,10 +1,12 @@
 import { Calendar } from "../../components/Calendar";
+import type { CalendarEvent } from "../../components/Calendar";
 import { BookingModal } from "../../components/Modals/BookingModal";
 import Datepicker from "react-tailwindcss-datepicker";
 import { useEffect, useState } from "react";
-
+import { getAllQueues } from "../../api/QueueAPI";
 import { Input } from "../../components/Inputs/Input";
 import { BoxSelect } from "../../components/BoxSelect";
+
 
 export function Booking() {
   const [value, setValue] = useState<{
@@ -14,7 +16,7 @@ export function Booking() {
     startDate: null,
     endDate: null,
   });
-  
+  const [data, setData] = useState<CalendarEvent[]>([]);
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [name, setName] = useState<string>('');
   const [tel, setTel] = useState<string>('');
@@ -23,19 +25,35 @@ export function Booking() {
     setSelectedTime('');
     
   };
-useEffect(() => {
+
+  useEffect(() => {
     const modal = document.getElementById("modal-booking") as HTMLDialogElement;
+   
+    getAllQueues().then((response) => {
+      // Extract the array from the response object
+      // This might be response.data, response.queues, or just response depending on your API
+      const queuesArray = response.data || response.queues || response || [];
+      setData(queuesArray);
+      console.log("Queues fetched successfully:", queuesArray);
+    }).catch((error) => {
+      console.error("Error fetching queues:", error);
+      setData([]); // Set empty array on error
+    });
+    
     
     const handleClose = () => {
       resetForm();
     };
-
+    
     if (modal) {
       modal.addEventListener('close', handleClose);
       return () => modal.removeEventListener('close', handleClose);
     }
+
+  
   }, []);
 
+  
   return (
     <div className="flex flex-col items-center justify-center ">
       <div className="flex justify-between w-full">
@@ -52,7 +70,7 @@ useEffect(() => {
         </button>
       </div>
       <div className="w-full ">
-        <Calendar />
+        <Calendar  data={data}/>
       </div>
       <BookingModal id="modal-booking">
         <h3 className="font-bold text-lg">Booking</h3>

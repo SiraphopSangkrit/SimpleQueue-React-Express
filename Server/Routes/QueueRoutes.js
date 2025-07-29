@@ -9,9 +9,9 @@ const queueController = new QueueController();
 // Basic CRUD operations
 queueRouter.get('/', queueController.getAllQueues);
 queueRouter.get('/:id', queueController.getQueueById);
-queueRouter.post('/', queueController.createQueue);
-queueRouter.put('/:id', queueController.updateQueue);
-queueRouter.delete('/:id', queueController.deleteQueue);
+queueRouter.post('/create', queueController.createQueue);
+queueRouter.put('/update/:id', queueController.updateQueue);
+queueRouter.delete('/delete/:id', queueController.deleteQueue);
 
 // Queue management routes
 queueRouter.patch('/:id/status', queueController.updateQueueStatus);

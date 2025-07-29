@@ -6,12 +6,9 @@ const queueSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  customerName: {
-    type: String,
-    required: true,
-  },
-  customerPhone: {
-    type: String,
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Customer',
     required: true,
   },
   serviceType: {

@@ -7,7 +7,7 @@ import { Customer } from "./pages/Admin/Customer";
 import UserLayout from "./layout/UserLayout";
 import { UserBooking } from "./pages/Users/UserBooking";
 import  {General} from "./pages/Admin/Settings/General";
-
+import { BookingSuccess } from "./pages/Users/QueueSuccess";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -41,6 +41,10 @@ const router = createBrowserRouter([
        path: "bookings",
         element: <UserBooking />,
       },
+      {
+        path: "booking-confirmation/:bookingId",
+        element: <BookingSuccess />,
+      }
     ],
   },
 ]);
