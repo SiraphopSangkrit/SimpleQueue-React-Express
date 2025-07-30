@@ -1,0 +1,50 @@
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:3000";
+
+export interface ServiceTypeProps {
+    _id?: string; // Optional for updates
+  name: string;
+  isActive?: boolean;
+  order?: number;
+}
+
+export const addServiceType = async (data: ServiceTypeProps) => {
+  try {
+    const response = await axios.post("/api/settings/service-types", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding service type:", error);
+    throw error;
+  }
+};
+
+export const getServiceTypes = async () => {
+  try {
+    const response = await axios.get("/api/settings/service-types");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching service types:", error);
+    throw error;
+  }
+};
+
+export const getSettings = async () => {
+  try {
+    const response = await axios.get("/api/settings");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching settings:", error);
+    throw error;
+  }
+};
+
+export const deleteServiceType = async (id: string) => {
+  try {
+    const response = await axios.delete(`/api/settings/service-types/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting service type:", error);
+    throw error;
+  }
+};

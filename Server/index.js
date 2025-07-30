@@ -19,6 +19,8 @@ const UserRoutes= require('./Routes/UserRoutes');
 app.use('/api/users', UserRoutes);
 const QueueRoutes = require('./Routes/QueueRoutes');
 app.use('/api/queues', QueueRoutes);
+const SettingRoutes = require('./Routes/SettingRoutes');
+app.use('/api/settings', SettingRoutes);
 
 // Handle MongoDB connection events
 db.on('connected', () => {
