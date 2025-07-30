@@ -10,4 +10,5 @@ router.put('/', settingsController.updateSettings);
 router.post('/service-types', settingsController.createServiceType); 
 router.delete('/service-types/:id', settingsController.deleteServiceType);
 
+
 module.exports = router;

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+
+
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL; 
 
 export interface ServiceTypeProps {
@@ -19,15 +21,6 @@ export const addServiceType = async (data: ServiceTypeProps) => {
   }
 };
 
-export const getServiceTypes = async () => {
-  try {
-    const response = await axios.get("/api/settings/service-types");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching service types:", error);
-    throw error;
-  }
-};
 
 export const getSettings = async () => {
   try {
@@ -35,6 +28,15 @@ export const getSettings = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching settings:", error);
+    throw error;
+  }
+};
+export const getServiceTypes = async () => {
+  try {
+    const response = await getSettings();
+    return response.data.serviceTypes || [];
+  } catch (error) {
+    console.error("Error fetching service types:", error);
     throw error;
   }
 };

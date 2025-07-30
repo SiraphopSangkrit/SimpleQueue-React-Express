@@ -130,5 +130,6 @@ class SettingsController {
       });
     }
   }
+
 }
 module.exports = SettingsController;

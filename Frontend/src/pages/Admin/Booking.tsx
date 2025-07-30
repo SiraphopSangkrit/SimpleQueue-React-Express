@@ -30,8 +30,7 @@ export function Booking() {
     const modal = document.getElementById("modal-booking") as HTMLDialogElement;
    
     getAllQueues().then((response) => {
-      // Extract the array from the response object
-      // This might be response.data, response.queues, or just response depending on your API
+     
       const queuesArray = response.data || response.queues || response || [];
       setData(queuesArray);
       console.log("Queues fetched successfully:", queuesArray);
@@ -39,7 +38,9 @@ export function Booking() {
       console.error("Error fetching queues:", error);
       setData([]); // Set empty array on error
     });
+      
     
+
     
     const handleClose = () => {
       resetForm();

@@ -1,11 +1,13 @@
 import { Card } from "../../components/Card";
 import { Input } from "../../components/Inputs/Input";
 import Datepicker from "react-tailwindcss-datepicker";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { BoxSelect } from "../../components/BoxSelect";
 import { Label } from "../../components/Inputs/Label";
 import { createQueue } from "../../api/QueueAPI";
 import { useNavigate } from "react-router";
+import { getServiceTypes } from "../../api/SettingsAPI";
+import Select from 'react-select'
 
 export function UserBooking() {
   const navigate = useNavigate();
@@ -20,7 +22,8 @@ export function UserBooking() {
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [tel, setTel] = useState<string>("");
-  const [serviceType, setServiceType] = useState<string>("");
+  const [serviceTypeList, setServiceTypeList] = useState<any[]>([]);
+  const [serviceType, setServiceType] = useState<any>(null);
   // const [isLoading, setIsLoading] = useState(false);
 
   const resetForm = () => {
@@ -28,20 +31,41 @@ export function UserBooking() {
     setSelectedTime("");
     setName("");
     setTel("");
-    setServiceType("");
+    setServiceType(null);
   };
   const handleClose = () => {
     resetForm();
   };
 
+useEffect(() => {
+  getServiceTypes().then((response) => {
+    const serviceTypesArray = response.data || response.serviceTypes || response || [];
+    setServiceTypeList(serviceTypesArray);
+    console.log("Service types fetched successfully:", serviceTypesArray);
+  }).catch((error) => {
+    console.error("Error fetching service types:", error);
+    setServiceTypeList([]); 
+  });
+
+
+
+}, []);
+
+
+  const option = serviceTypeList.map((type) => ({
+    value: type.name,
+    label: type.name,
+  }));
+
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // setIsLoading(true);
+ 
     try {
       const bookingData = {
         customerName: name,
         customerPhone: tel,
-        serviceType: serviceType,
+        serviceType: serviceType?.value || "",
         bookingDate: value.startDate
           ? value.startDate.toLocaleDateString()
           : "",
@@ -90,15 +114,9 @@ export function UserBooking() {
             />
           </div>
           <div className="flex items-center gap-4 mb-4">
-            <Input
-              boxClassName="flex-1"
-              label="เลือกบริการ"
-              value={serviceType}
-              onChange={(value) => setServiceType(value)}
-              placeholder="เลือกบริการ"
-              type="text"
-              name="serviceType"
-            />
+           <Select options={option} className="w-full" value={serviceType} onChange={(e) => setServiceType(e)} placeholder="เลือกประเภทบริการ" isSearchable={true} isClearable={true} classNamePrefix="react-select"
+        
+           />
           </div>
           <div className="flex items-center gap-4 mb-4">
             <div className="w-full">
