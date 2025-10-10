@@ -1,13 +1,13 @@
 import { Card } from "../../components/Card";
 import { Input } from "../../components/Inputs/Input";
 import Datepicker from "react-tailwindcss-datepicker";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BoxSelect } from "../../components/BoxSelect";
 import { Label } from "../../components/Inputs/Label";
 import { createQueue } from "../../api/QueueAPI";
 import { useNavigate } from "react-router";
-import { getServiceTypes } from "../../api/SettingsAPI";
-import Select from 'react-select'
+import { getServiceTypes, getTimeSlots } from "../../api/SettingsAPI";
+
 
 export function UserBooking() {
   const navigate = useNavigate();
@@ -24,7 +24,43 @@ export function UserBooking() {
   const [tel, setTel] = useState<string>("");
   const [serviceTypeList, setServiceTypeList] = useState<any[]>([]);
   const [serviceType, setServiceType] = useState<any>(null);
+  const [timeSlots, setTimeSlots] = useState<any[]>([]);
+
+  const [errors, setErrors] = useState({
+    name: "",
+    tel: "",
+    serviceType: "",
+    date: "",
+    time: "",
+  });
   // const [isLoading, setIsLoading] = useState(false);
+
+
+
+  // Update your validateForm function
+  const validateForm = () => {
+    const newErrors = {
+      name: name.trim() === "" ? "กรุณากรอกชื่อ-นามสกุล" : "",
+      tel: tel.trim() === "" ? "กรุณากรอกเบอร์โทร" : "",
+      serviceType: !serviceType ? "กรุณาเลือกประเภทบริการ" : "",
+      date: !value?.startDate ? "กรุณาเลือกวันที่" : "",
+      time: !selectedTime ? "กรุณาเลือกเวลาที่ต้องการจอง" : "",
+    };
+
+    setErrors(newErrors);
+
+    // Auto-clear errors after 5 seconds
+    Object.entries(newErrors).forEach(([field, message]) => {
+      if (message) {
+        setTimeout(() => {
+          setErrors(prev => ({ ...prev, [field]: "" }));
+        }, 3000);
+      }
+    });
+
+    // Return true if no errors
+    return Object.values(newErrors).every((error) => error === "");
+  };
 
   const resetForm = () => {
     setValue({ startDate: null, endDate: null });
@@ -32,36 +68,59 @@ export function UserBooking() {
     setName("");
     setTel("");
     setServiceType(null);
+    setErrors({
+      name: "",
+      tel: "",
+      serviceType: "",
+      date: "",
+      time: "",
+    });
   };
   const handleClose = () => {
     resetForm();
   };
 
-useEffect(() => {
-  getServiceTypes().then((response) => {
-    const serviceTypesArray = response.data || response.serviceTypes || response || [];
-    setServiceTypeList(serviceTypesArray);
-    console.log("Service types fetched successfully:", serviceTypesArray);
-  }).catch((error) => {
-    console.error("Error fetching service types:", error);
-    setServiceTypeList([]); 
-  });
+  useEffect(() => {
+    getServiceTypes()
+      .then((response) => {
+        const serviceTypesArray =
+          response.data || response.serviceTypes || response || [];
+        setServiceTypeList(serviceTypesArray);
+        console.log("Service types fetched successfully:", serviceTypesArray);
+      })
+      .catch((error) => {
+        console.error("Error fetching service types:", error);
+        setServiceTypeList([]);
+      });
 
+    getTimeSlots()
+      .then((response) => {
+        const timeSlotsArray =
+          response.data || response.TimeSlots || response || [];
+        setTimeSlots(timeSlotsArray);
 
+        console.log("Time slots fetched successfully:", timeSlotsArray);
+      })
+      .catch((error) => {
+        console.error("Error fetching time slots:", error);
+        setTimeSlots([]);
+      });
+  }, []);
 
-}, []);
-
-
-  const option = serviceTypeList.map((type) => ({
+  const serviceTypeOptions = serviceTypeList.map((type) => ({
+    _id: type._id,
     value: type.name,
     label: type.name,
   }));
 
-  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
- 
+
     try {
+      if (!validateForm()) {
+        return;
+      }
+
       const bookingData = {
         customerName: name,
         customerPhone: tel,
@@ -72,16 +131,72 @@ useEffect(() => {
         timeSlot: selectedTime,
       };
 
-     const response = await createQueue(bookingData);
+      const response = await createQueue(bookingData);
 
       resetForm();
 
       navigate(`/users/booking-confirmation/${response.data._id}`, {
-        state: { booking: response.data, customer: { customerName: name, customerPhone: tel } },
+        state: {
+          booking: response.data,
+          customer: { customerName: name, customerPhone: tel },
+        },
       });
-
     } catch (error) {
       console.error("Error creating booking:", error);
+    }
+  };
+
+  const handleTimeChange = (timeSlotId: string) => {
+    setSelectedTime(timeSlotId);
+    if (errors.time) {
+      setErrors((prev) => ({ ...prev, time: "" }));
+    }
+  };
+
+  const calculateEndTime = (startTime: string, duration: number) => {
+    const [hours, minutes] = startTime.split(":").map(Number);
+    const startMinutes = hours * 60 + minutes;
+    const endMinutes = startMinutes + duration;
+
+    const endHours = Math.floor(endMinutes / 60);
+    const endMins = endMinutes % 60;
+
+    return `${endHours.toString().padStart(2, "0")}:${endMins
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  // Add these handler functions to clear errors when user types/selects
+  const handleNameChange = (value: string) => {
+    setName(value);
+    if (errors.name) {
+      setErrors((prev) => ({ ...prev, name: "" }));
+    }
+  };
+
+  const handleTelChange = (value: string) => {
+    setTel(value);
+    if (errors.tel) {
+      setErrors((prev) => ({ ...prev, tel: "" }));
+    }
+  };
+
+  // Update the handleServiceTypeChange function for native select
+  const handleServiceTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    const selectedOption = serviceTypeOptions.find(option => option._id === selectedId);
+    setServiceType(selectedOption || null);
+    if (errors.serviceType) {
+      setErrors((prev) => ({ ...prev, serviceType: "" }));
+    }
+  };
+
+  const handleDateChange = (newValue: any) => {
+    if (newValue) {
+      setValue(newValue as { startDate: Date | null; endDate: Date | null });
+      if (errors.date) {
+        setErrors((prev) => ({ ...prev, date: "" }));
+      }
     }
   };
 
@@ -93,104 +208,130 @@ useEffect(() => {
       <form className=" w-full lg:max-w-3xl mx-auto" onSubmit={handleSubmit}>
         <Card className="w-full">
           <div className="p-4"></div>
+
+          {/* Name and Phone inputs */}
           <div className="flex items-center gap-4 mb-4 md:flex-row flex-col">
-            <Input
-              boxClassName="flex-2"
-              label="ชื่อ-นามสกุล"
-              value={name}
-              onChange={(value) => setName(value)}
-              placeholder="ชื่อ-นามสกุล"
-              type="text"
-              name="name"
-            />
-            <Input
-              boxClassName="flex-1"
-              label="เบอร์โทร"
-              value={tel}
-              onChange={(value) => setTel(value)}
-              placeholder="เบอร์โทร"
-              type="text"
-              name="tel"
-            />
+            <div className="flex-2 w-full">
+              <Input
+                boxClassName="w-full"
+                label="ชื่อ-นามสกุล"
+                value={name}
+                onChange={handleNameChange}
+                placeholder="ชื่อ-นามสกุล"
+                type="text"
+                name="name"
+                className={errors.name ? "border-red-500" : ""}
+              />
+
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1 absolute">
+                  {errors.name}
+                </p>
+              )}
+            </div>
+
+            <div className="flex-1 w-full">
+              <Input
+                boxClassName="w-full"
+                label="เบอร์โทร"
+                value={tel}
+                onChange={handleTelChange}
+                placeholder="เบอร์โทร"
+                type="text"
+                name="tel"
+                className={errors.tel ? "border-red-500" : ""}
+              />
+              {errors.tel && (
+                <p className="text-red-500 text-sm mt-1 absolute">
+                  {errors.tel}
+                </p>
+              )}
+            </div>
           </div>
+
+          {/* Service Type Select */}
           <div className="flex items-center gap-4 mb-4">
-           <Select options={option} className="w-full" value={serviceType} onChange={(e) => setServiceType(e)} placeholder="เลือกประเภทบริการ" isSearchable={true} isClearable={true} classNamePrefix="react-select"
-        
-           />
+            <div className="w-full">
+              <Label label="ประเภทบริการ" />
+              <select
+                onChange={handleServiceTypeChange}
+                value={serviceType?._id || ""} // Use the _id for value
+                className={`select border w-full text-gray-700 dark:text-gray-300 bg-base-200 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${errors.serviceType ? "border-red-500" : ""}`}
+              >
+                <option value="" disabled>
+                  เลือกประเภทบริการ
+                </option>
+                {serviceTypeOptions.map((option) => (
+                  <option key={option._id} value={option._id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              {errors.serviceType && (
+                <p className="text-red-500 text-sm mt-1 absolute">{errors.serviceType}</p>
+              )}
+            </div>
           </div>
+
+          {/* Date Picker */}
           <div className="flex items-center gap-4 mb-4">
             <div className="w-full">
               <Label label="วันที่จอง" />
-
               <Datepicker
                 displayFormat="DD/MM/YYYY"
                 i18n={"th"}
                 useRange={false}
                 asSingle={true}
                 value={value}
-                onChange={(newValue) => {
-                  if (newValue) {
-                    setValue(
-                      newValue as {
-                        startDate: Date | null;
-                        endDate: Date | null;
-                      }
-                    );
-                  }
-                }}
-                inputClassName="input w-full text-gray-700 dark:text-gray-300 bg-base-200   border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                onChange={handleDateChange}
+                inputClassName={`input w-full text-gray-700 dark:text-gray-300 bg-base-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  errors.date ? "border-red-500" : ""
+                }`}
               />
+              {errors.date && (
+                <p className="text-red-500 text-sm mt-1 absolute">
+                  {errors.date}
+                </p>
+              )}
             </div>
           </div>
+
+          {/* Time Slots */}
           <div className="flex items-center gap-4 mb-4">
             <div className="w-full">
               <Label label="เวลาที่จอง" />
-              <fieldset className="space-y-6">
+              <fieldset >
                 <div className="grid sm:grid-cols-4 gap-2">
-                  <BoxSelect
-                    id="1"
-                    startTime="9.00"
-                    endTime="10.00"
-                    name="time-picker"
-                    checked={selectedTime === "1"}
-                    onChange={setSelectedTime}
-                  />
-                  <BoxSelect
-                    id="2"
-                    startTime="10.00"
-                    endTime="11.00"
-                    name="time-picker"
-                    checked={selectedTime === "2"}
-                    onChange={setSelectedTime}
-                  />
-                  <BoxSelect
-                    id="3"
-                    startTime="11.00"
-                    endTime="12.00"
-                    name="time-picker"
-                    checked={selectedTime === "3"}
-                    onChange={setSelectedTime}
-                  />
-                  <BoxSelect
-                    id="4"
-                    startTime="01.00"
-                    endTime="02.00"
-                    name="time-picker"
-                    checked={selectedTime === "4"}
-                    onChange={setSelectedTime}
-                  />
+                  {timeSlots.map((slot) => (
+                    <BoxSelect
+                      key={slot._id}
+                      id={`time-slot-${slot._id}`}
+                      startTime={slot.StartTime}
+                      endTime={calculateEndTime(slot.StartTime, slot.duration)}
+                      value={slot._id}
+                      name="time-picker"
+                      checked={selectedTime === slot._id}
+                      onChange={handleTimeChange}
+                      className={errors.time ? "border-red-500" : ""}
+                    />
+                  ))}
                 </div>
+                {errors.time && (
+                  <p className="text-red-500 text-sm mt-1 absolute">
+                    {errors.time}
+                  </p>
+                )}
               </fieldset>
             </div>
           </div>
+
           <div className="flex lg:justify-end justify-center">
             <button type="submit" className="btn btn-primary">
               Confirm Booking
             </button>
-
-            <button className="btn" onClick={handleClose}>
+            <div className="btn" onClick={handleClose}>
               Clear
-            </button>
+            </div>
           </div>
         </Card>
       </form>

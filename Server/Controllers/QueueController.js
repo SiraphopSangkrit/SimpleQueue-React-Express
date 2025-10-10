@@ -1,5 +1,6 @@
 const QueueModel = require("../Models/Queue");
 const CustomerModel = require("../Models/Customer");
+const SettingModel = require("../Models/Settings");
 class QueueController {
   // Get all queues
   async getAllQueues(req, res) {
@@ -7,9 +8,21 @@ class QueueController {
       const queues = await QueueModel.find()
         .populate("customerId")
         .sort({ queueNumber: 1 });
+
+        const settings = await SettingModel.getSingle();
+    
+    // Add time slot details to each queue
+    const queuesWithTimeSlots = queues.map(queue => {
+      const timeSlotDetails = settings.TimeSlots.id(queue.timeSlot);
+      return {
+        ...queue.toObject(),
+        timeSlotDetails: timeSlotDetails || null
+      };
+    });
+
       res.status(200).json({
         success: true,
-        data: queues,
+        data: queuesWithTimeSlots,
       });
     } catch (error) {
       res.status(500).json({
@@ -32,10 +45,18 @@ class QueueController {
           message: "Queue not found",
         });
       }
+    const settings = await SettingModel.getSingle();
+    const timeSlotDetails = settings.TimeSlots.id(queue.timeSlot);
+
+    // Add time slot details to the response
+    const queueWithTimeSlot = {
+      ...queue.toObject(),
+      timeSlotDetails: timeSlotDetails || null
+    };
 
       res.status(200).json({
         success: true,
-        data: queue,
+        data: queueWithTimeSlot,
       });
     } catch (error) {
       res.status(500).json({

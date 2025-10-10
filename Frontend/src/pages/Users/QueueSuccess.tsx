@@ -1,16 +1,70 @@
 // Create: /Frontend/src/pages/Users/BookingConfirmation.tsx
 import { useLocation, useNavigate } from 'react-router';
 import { Card } from "../../components/Card";
+import { getQueueByID } from '../../api/QueueAPI';
+import { useEffect, useState } from 'react';
 
 export function BookingSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
+
   const { booking, customer } = location.state || {};
+  const [bookingDetail, setBookingDetail] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   if (!booking) {
     navigate('/users/bookings');
     return null;
   }
+
+  useEffect(() => {
+    const fetchQueueDetails = async () => {
+      try {
+        setLoading(true);
+        const queueDetails = await getQueueByID(booking._id);
+        setBookingDetail(queueDetails.data || null);
+      } catch (error) {
+        console.error("Error fetching queue details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchQueueDetails();
+  }, [booking._id]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex flex-col max-w-4xl w-full justify-center items-center mx-auto p-4">
+        <Card className="w-full max-w-2xl">
+          <div className="p-6 text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4">กำลังโหลดข้อมูล...</p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show error state if no booking detail
+  if (!bookingDetail) {
+    return (
+      <div className="flex flex-col max-w-4xl w-full justify-center items-center mx-auto p-4">
+        <Card className="w-full max-w-2xl">
+          <div className="p-6 text-center">
+            <p className="text-red-600">ไม่สามารถโหลดข้อมูลคิวได้</p>
+            <button 
+              className="btn btn-primary mt-4"
+              onClick={() => navigate('/users/bookings')}
+            >
+              กลับหน้าจองคิว
+            </button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col max-w-4xl w-full justify-center items-center mx-auto p-4">
       <Card className="w-full max-w-2xl">
@@ -28,27 +82,27 @@ export function BookingSuccess() {
           <div className="space-y-4 text-left">
             <div className="border-b pb-2">
               <span className="font-semibold">หมายเลขคิว:</span>
-              <span className="ml-2 text-2xl font-bold text-blue-600">#{booking.queueNumber}</span>
+              <span className="ml-2 text-2xl font-bold text-blue-600">#{bookingDetail?.queueNumber || 'N/A'}</span>
             </div>
             <div className="border-b pb-2">
               <span className="font-semibold">ชื่อ:</span>
-              <span className="ml-2">{customer?.customerName}</span>
+              <span className="ml-2">{bookingDetail?.customerId?.customerName || 'N/A'}</span>
             </div>
             <div className="border-b pb-2">
               <span className="font-semibold">เบอร์โทร:</span>
-              <span className="ml-2">{customer?.customerPhone}</span>
+              <span className="ml-2">{bookingDetail?.customerId?.customerPhone || 'N/A'}</span>
             </div>
             <div className="border-b pb-2">
               <span className="font-semibold">วันที่:</span>
-              <span className="ml-2">{new Date(booking.bookingDate).toLocaleDateString('th-TH')}</span>
+              <span className="ml-2">{bookingDetail?.bookingDate ? new Date(bookingDetail?.bookingDate).toLocaleDateString('th-TH') : 'N/A'}</span>
             </div>
             <div className="border-b pb-2">
               <span className="font-semibold">เวลา:</span>
-              <span className="ml-2">{booking.timeSlot}</span>
+              <span className="ml-2">{bookingDetail?.timeSlotDetails?.StartTime || 'N/A'}</span>
             </div>
             <div className="border-b pb-2">
               <span className="font-semibold">บริการ:</span>
-              <span className="ml-2">{booking.serviceType}</span>
+              <span className="ml-2">{bookingDetail?.serviceType || 'N/A'}</span>
             </div>
           </div>
           

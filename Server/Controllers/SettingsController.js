@@ -99,7 +99,7 @@ class SettingsController {
     }
       const settings = await SettingModel.getSingle();
        
-    // Check if service type exists before deletion
+    
     const serviceTypeExists = settings.serviceTypes.some(
       (type) => type._id.toString() === id
     );
@@ -111,7 +111,6 @@ class SettingsController {
       });
     }
 
-    // Filter out the service type
     settings.serviceTypes = settings.serviceTypes.filter(
       (type) => type._id.toString() !== id
     );

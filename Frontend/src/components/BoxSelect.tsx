@@ -1,20 +1,29 @@
-
 interface BoxContentProps {
   id?: string;
   startTime?: string;
   endTime?: string;
   name?: string;
   checked?: boolean;
+  value?: string;
   onChange?: (value: string) => void;
-
+  className?: string;
 }
 
-export function BoxSelect({ id, startTime, endTime, name, checked, onChange }: BoxContentProps) {
+export function BoxSelect({
+  id,
+  startTime,
+  endTime,
+  name,
+  checked,
+  value,
+  onChange,
+  className,
+}: BoxContentProps) {
   return (
     <div>
       <label
         htmlFor={id}
-        className="relative flex flex-col bg-base-200 p-3 rounded-lg shadow-md cursor-pointer border border-gray-300 hover:border-green-500 transition duration-200"
+        className={`relative flex flex-col bg-base-200 p-3 rounded-lg shadow-md cursor-pointer border border-gray-300 hover:border-green-500 transition duration-200 ${className}`}
       >
         <span className="font-bold text-gray-700 dark:text-gray-300">
           <span className="text-base">{startTime}</span>
@@ -26,14 +35,16 @@ export function BoxSelect({ id, startTime, endTime, name, checked, onChange }: B
           type="radio"
           name={name}
           id={id}
-          value={id}
+          value={value}
           checked={checked}
-          onChange={() => onChange?.(id || '')}
+          onChange={() => onChange?.(value || "")}
           className="absolute h-0 w-0 appearance-none"
         />
         <span
           aria-hidden="true"
-          className={`${checked ? 'block' : 'hidden'} absolute inset-0 border-2 border-green-500 bg-green-200/20 rounded-lg`}
+          className={`${
+            checked ? "block" : "hidden"
+          } absolute inset-0 border-2 border-green-500 bg-green-200/20 rounded-lg`}
         >
           <span className="absolute -top-3 -right-2 h-6 w-6 inline-flex items-center justify-center rounded-full bg-green-200">
             <svg

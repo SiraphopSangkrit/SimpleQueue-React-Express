@@ -40,7 +40,15 @@ export const getServiceTypes = async () => {
     throw error;
   }
 };
-
+export const getTimeSlots = async () => {
+  try {
+    const response = await getSettings();
+    return response.data.TimeSlots || [];
+  } catch (error) {
+    console.error("Error fetching time slots:", error);
+    throw error;
+  }
+};
 export const deleteServiceType = async (id: string) => {
   try {
     const response = await axios.delete(`/api/settings/service-types/${id}`);

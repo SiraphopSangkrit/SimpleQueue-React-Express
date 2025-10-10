@@ -80,7 +80,7 @@ export function Booking() {
           <Input
             boxClassName="flex-2"
             label="ชื่อ-นามสกุล"
-           value={name}
+            value={name}
             onChange={(value) => setName(value)}
             placeholder="ชื่อ-นามสกุล"
             type="text"

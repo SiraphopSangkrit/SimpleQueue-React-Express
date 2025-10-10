@@ -48,4 +48,14 @@ export const createQueue = async (data: UserBookingProps) => {
     }
 
   }
+
+  export const getQueueByID= async(id:string)=>{
+    try{
+      const response = await axios.get(`/api/queues/${id}`);
+      return response.data;
+    }catch(error){
+      console.error("Error fetching queue by ID:", error);
+      throw error;
+    }
+  }
   

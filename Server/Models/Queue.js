@@ -26,7 +26,7 @@ const queueSchema = new mongoose.Schema({
     required: true,
   },
   timeSlot: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   notes: {
