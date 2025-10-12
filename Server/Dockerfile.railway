@@ -1,0 +1,17 @@
+# Simple Railway Dockerfile
+FROM node:22-alpine
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copy app source
+COPY . .
+
+# Expose port
+EXPOSE $PORT
+
+# Start app
+CMD ["npm", "start"]
