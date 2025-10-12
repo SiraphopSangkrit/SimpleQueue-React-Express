@@ -7,9 +7,8 @@ export function General() {
   const [serviceTypesList, setServiceTypesList] = useState<any[]>([]);
   const [serviceType, setServiceType] = useState<string>("");
 
-  const [isActive, setIsActive] = useState<boolean>(true);
 
-  
+
 
   useEffect(() => {
     const fetchSettings = async () => {
