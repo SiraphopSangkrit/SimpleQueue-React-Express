@@ -8,7 +8,7 @@ export function BookingSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { booking, customer } = location.state || {};
+  const { booking } = location.state || {};
   const [bookingDetail, setBookingDetail] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -81,7 +81,7 @@ export function BookingSuccess() {
           
           <div className="space-y-4 text-left">
             <div className="border-b pb-2">
-              <span className="font-semibold">หมายเลขคิว:</span>
+              <span className="font-semibold">คิวที่:</span>
               <span className="ml-2 text-2xl font-bold text-blue-600">#{bookingDetail?.queueNumber || 'N/A'}</span>
             </div>
             <div className="border-b pb-2">
@@ -102,17 +102,12 @@ export function BookingSuccess() {
             </div>
             <div className="border-b pb-2">
               <span className="font-semibold">บริการ:</span>
-              <span className="ml-2">{bookingDetail?.serviceType || 'N/A'}</span>
+              <span className="ml-2">{bookingDetail?.serviceTypeDetails?.name || 'N/A'}</span>
             </div>
           </div>
           
           <div className="mt-6 space-y-3">
-            <button 
-              className="btn btn-primary w-full"
-              onClick={() => navigate('/queue-status', { state: { queueId: booking._id } })}
-            >
-              ดูสถานะคิว
-            </button>
+
             <button 
               className="btn btn-outline w-full"
               onClick={() => navigate('/users/bookings')}

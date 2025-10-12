@@ -40,6 +40,17 @@ export const getServiceTypes = async () => {
     throw error;
   }
 };
+
+export const updateServiceType = async (id: string, data: ServiceTypeProps) => {
+  try {
+    const response = await axios.put(`/api/settings/service-types/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating service type:", error);
+    throw error;
+  }
+}
+
 export const getTimeSlots = async () => {
   try {
     const response = await getSettings();

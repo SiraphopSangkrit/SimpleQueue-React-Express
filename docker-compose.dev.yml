@@ -1,0 +1,91 @@
+# Development version with simplified setup
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:latest
+    container_name: simplequeue-mongodb-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: SimpleQueues
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - simplequeue-network
+
+  # Backend API Server
+  backend:
+    build:
+      context: ./Server
+      dockerfile: Dockerfile.dev
+    container_name: simplequeue-backend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGO_DB_URL=mongodb://mongodb:27017/SimpleQueues
+    depends_on:
+      - mongodb
+    volumes:
+      - ./Server:/app
+      - /app/node_modules
+    networks:
+      - simplequeue-network
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile.dev
+    container_name: simplequeue-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - backend
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    networks:
+      - simplequeue-network
+
+  # n8n Workflow Automation
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: simplequeue-n8n-dev
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=false
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Asia/Bangkok
+      - N8N_LOG_LEVEL=debug
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      - backend
+      - mongodb
+    networks:
+      - simplequeue-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  n8n_data:
+    driver: local
+
+networks:
+  simplequeue-network:
+    driver: bridge

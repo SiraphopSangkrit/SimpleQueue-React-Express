@@ -63,18 +63,7 @@ export function SideBar({ isOpen = true, onClose, totalBookings = "" }: SideBarP
         <UsersIcon className="w-5 h-5" />
       ),
       path: "/customers",
-        children: [
-        {
-          label: "จอง",
-          icon:'',
-          path: "/users/bookings"
-        },
-        {
-          label: "รายชื่อลูกค้า",
-          icon: '',
-          path: "/"
-        }
-      ]
+       
     },
     {
       label: "การตั้งค่า",

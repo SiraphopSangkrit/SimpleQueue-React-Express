@@ -7,15 +7,21 @@ import { CustomerModal } from "./Modals/CustomerModal";
 
 export interface CalendarEvent {
   _id: string;
-  queueNumber: number;
   customerId: {
     customerName: string;
     customerPhone: string;
   };
+  queueNumber: number;
   serviceType: string;
+  serviceTypeDetails:{
+    name: string;
+  };
   status: string;
   bookingDate: string;
   timeSlot: string;
+  timeSlotDetails: {
+    startTime: string;
+  };
 }
 
 export interface CalendarProps {
@@ -30,7 +36,6 @@ export function Calendar({data}: CalendarProps) {
     const event = clickInfo.event;
     const extendedProps = event.extendedProps;
 
-
     const modal = document.getElementById("booking-detail-modal") as HTMLDialogElement;
     if (modal) {
       modal.showModal();
@@ -38,12 +43,13 @@ export function Calendar({data}: CalendarProps) {
       if (modalContent) {
         modalContent.innerHTML = `
           <h1 class="text-lg font-bold">${extendedProps.customerName}</h1>
-          <p>Queue Number: ${extendedProps.queueNumber}</p>
-          <p>Service Type: ${extendedProps.serviceType}</p>
-           <p>Date: ${event.startStr || event.start?.toDateString() || 'N/A'}</p>
-          <p>Time Slot: ${extendedProps.timeSlot}</p>
+          <p>คิวที่: ${extendedProps.queueNumber}</p>
+          <p>Service Type: ${extendedProps.serviceType.name}</p>
+           <p>Date: ${ event.start?.toDateString() || 'N/A'}</p>
+          <p>Time Slot: ${extendedProps.timeSlotDetails.StartTime} น.</p>
           <p>Status: ${extendedProps.status}</p>
-          
+          <p>Phone: ${extendedProps.customerPhone || 'N/A'}</p>
+
         `;
       }
       const closeButton = modal.querySelector("button");
@@ -66,19 +72,24 @@ export function Calendar({data}: CalendarProps) {
 
   const calendarEvents = (data || []).map((data) => ({
     id: data._id,
-    title: `#${data.queueNumber} - ${data.customerId.customerName}`,
+    title: `คิวที่ ${data.queueNumber} - ${data.customerId.customerName} (${data.serviceTypeDetails.name})`,
     date: data.bookingDate.split('T')[0],
     color: getColorByStatus(data.status),
     extendedProps: {
       queueNumber: data.queueNumber,
       customerName: data.customerId.customerName,
-      serviceType: data.serviceType,
+      customerPhone: data.customerId.customerPhone,
+      serviceType: data.serviceTypeDetails,
       timeSlot: data.timeSlot,
+      timeSlotDetails: data.timeSlotDetails,
       status: data.status
+
+
     }
   }));
 
 
+console.log(calendarEvents);
   // Regular events
   
 

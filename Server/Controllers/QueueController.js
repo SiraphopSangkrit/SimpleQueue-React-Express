@@ -7,22 +7,24 @@ class QueueController {
     try {
       const queues = await QueueModel.find()
         .populate("customerId")
-        .sort({ queueNumber: 1 });
+        .sort({ bookingDate: 1, queueNumber: 1 });
 
         const settings = await SettingModel.getSingle();
     
     // Add time slot details to each queue
-    const queuesWithTimeSlots = queues.map(queue => {
+    const queuesWithSettings = queues.map(queue => {
       const timeSlotDetails = settings.TimeSlots.id(queue.timeSlot);
+      const serviceTypeDetails = settings.serviceTypes.id(queue.serviceTypeId);
       return {
         ...queue.toObject(),
-        timeSlotDetails: timeSlotDetails || null
+        timeSlotDetails: timeSlotDetails || null,
+        serviceTypeDetails: serviceTypeDetails || null
       };
-    });
+      });
 
       res.status(200).json({
         success: true,
-        data: queuesWithTimeSlots,
+        data: queuesWithSettings,
       });
     } catch (error) {
       res.status(500).json({
@@ -73,15 +75,38 @@ class QueueController {
       const {
         customerName,
         customerPhone,
-        serviceType,
+        serviceTypeId,
         bookingDate,
         timeSlot,
         notes,
       } = req.body;
 
-      // Generate queue number
-      const lastQueue = await QueueModel.findOne().sort({ queueNumber: -1 });
-      const queueNumber = lastQueue ? lastQueue.queueNumber + 1 : 1;
+      if (!serviceTypeId) {
+        return res.status(400).json({
+          success: false,
+          message: "serviceTypeId is required",
+        });
+      }
+
+      // Generate global queue ID
+      const lastQueue = await QueueModel.findOne().sort({ queueId: -1 });
+      const queueId = lastQueue ? lastQueue.queueId + 1 : 1;
+
+      // Generate queue number for the specific date
+      const bookingDateObj = new Date(bookingDate);
+      const startOfDay = new Date(bookingDateObj);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(bookingDateObj);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const lastQueueForDate = await QueueModel.findOne({
+        bookingDate: {
+          $gte: startOfDay,
+          $lte: endOfDay,
+        }
+      }).sort({ queueNumber: -1 });
+
+      const queueNumber = lastQueueForDate && lastQueueForDate.queueNumber ? lastQueueForDate.queueNumber + 1 : 1;
 
       const checkCustomer = await CustomerModel.findOne({ customerPhone });
       let customerObject;
@@ -95,9 +120,10 @@ class QueueController {
         customerObject = await newCustomer.save();
       }
       const newQueue = new QueueModel({
+        queueId,
         queueNumber,
         customerId: customerObject._id,
-        serviceType,
+        serviceTypeId: serviceTypeId,
         bookingDate,
         timeSlot,
         notes: notes || "",
@@ -222,7 +248,7 @@ class QueueController {
   async getQueuesByStatus(req, res) {
     try {
       const { status } = req.params;
-      const queues = await QueueModel.find({ status }).sort({ queueNumber: 1 });
+      const queues = await QueueModel.find({ status }).sort({ bookingDate: 1, queueNumber: 1 });
 
       res.status(200).json({
         success: true,
@@ -308,7 +334,7 @@ class QueueController {
   async getNextQueue(req, res) {
     try {
       const nextQueue = await QueueModel.findOne({ status: "waiting" }).sort({
-        queueNumber: 1,
+        queueId: 1,
       });
 
       if (!nextQueue) {

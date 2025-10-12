@@ -4,7 +4,7 @@ axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
 export interface UserBookingProps {
   customerName: string;
   customerPhone: string;
-  serviceType: string;
+  serviceTypeId: string;
   bookingDate: string;
   timeSlot: string;
   notes?: string;

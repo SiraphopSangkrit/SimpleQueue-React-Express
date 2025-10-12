@@ -124,7 +124,7 @@ export function UserBooking() {
       const bookingData = {
         customerName: name,
         customerPhone: tel,
-        serviceType: serviceType?.value || "",
+        serviceTypeId: serviceType?._id || "",
         bookingDate: value.startDate
           ? value.startDate.toLocaleDateString()
           : "",

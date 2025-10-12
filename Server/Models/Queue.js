@@ -1,18 +1,22 @@
 const mongoose = require('mongoose');
 
 const queueSchema = new mongoose.Schema({
-  queueNumber: {
+  queueId: {
     type: Number,
     required: true,
     unique: true,
+  },
+  queueNumber: {
+    type: Number,
+    required: true,
   },
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Customer',
     required: true,
   },
-  serviceType: {
-    type: String,
+  serviceTypeId: {
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   status: {
@@ -44,6 +48,16 @@ const queueSchema = new mongoose.Schema({
   completedAt: {
     type: Date,
   },
+});
+
+// Indexes
+queueSchema.index({ queueId: 1, bookingDate: 1 }, { 
+  unique: true,
+});
+
+// Make queueNumber unique per date
+queueSchema.index({ queueNumber: 1, bookingDate: 1 }, { 
+  unique: true,
 });
 
 // Update the updatedAt field before saving

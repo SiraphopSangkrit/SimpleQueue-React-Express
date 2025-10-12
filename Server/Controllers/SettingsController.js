@@ -130,5 +130,63 @@ class SettingsController {
     }
   }
 
+  async updateServiceType(req, res) {
+    try {
+      const { id } = req.params;
+      const { name, isActive } = req.body;
+
+      if (!id) {
+        return res.status(400).json({
+          success: false,
+          message: "Service type ID is required",
+        });
+      }
+      const settings = await SettingModel.getSingle();
+      
+      const serviceType = settings.serviceTypes.id(id);
+      if (!serviceType) {
+        return res.status(404).json({
+          success: false,
+          message: "Service type not found",
+        });
+      }
+
+      // Update fields if provided
+      if (name !== undefined) serviceType.name = name;
+      if (isActive !== undefined) serviceType.isActive = isActive;
+
+      await settings.save();
+
+      res.status(200).json({
+        success: true,
+        data: settings.serviceTypes,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Error updating service type",
+        error: error.message,
+      });
+    }
+  }
+  
+  async getServiceTypes(req, res) {
+    try {
+      const settings = await SettingModel.getSingle();
+      res.status(200).json({
+        success: true,
+        services: settings.serviceTypes,
+        time_slots: settings.TimeSlots
+
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Error fetching service types",
+        error: error.message,
+      });
+    }
+  }
+
 }
 module.exports = SettingsController;

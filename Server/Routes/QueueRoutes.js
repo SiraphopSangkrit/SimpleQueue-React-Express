@@ -15,6 +15,7 @@ router.get('/status/:status', queueController.getQueuesByStatus);
 router.get('/month/weeks', queueController.getQueuesByMonthSplitByWeek);
 router.get('/month/iso-weeks', queueController.getQueuesByMonthWithISOWeeks);
 
+
 // Put parameterized routes AFTER specific routes
 router.get('/:id', queueController.getQueueById);
 router.post('/create', queueController.createQueue);

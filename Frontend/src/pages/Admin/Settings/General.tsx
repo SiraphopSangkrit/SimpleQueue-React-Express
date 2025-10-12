@@ -5,7 +5,11 @@ import { getSettings,deleteServiceType,addServiceType } from "../../../api/Setti
 export function General() {
   const [appName, setappName] = useState<string>("");
   const [serviceTypesList, setServiceTypesList] = useState<any[]>([]);
-    const [serviceType, setServiceType] = useState<string>("");
+  const [serviceType, setServiceType] = useState<string>("");
+
+  const [isActive, setIsActive] = useState<boolean>(true);
+
+  
 
   useEffect(() => {
     const fetchSettings = async () => {
