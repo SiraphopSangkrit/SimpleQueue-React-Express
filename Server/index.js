@@ -24,6 +24,8 @@ app.use('/api/queues', QueueRoutes);
 const SettingRoutes = require('./Routes/SettingRoutes');
 app.use('/api/settings', SettingRoutes);
 
+app.use('/api/customers', require('./Routes/CustomerRoutes'));
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ 

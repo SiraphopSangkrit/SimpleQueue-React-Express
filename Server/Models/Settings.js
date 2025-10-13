@@ -32,6 +32,7 @@ const OpeningHoursSchema = new mongoose.Schema(
 const ServiceTypeSchema = new mongoose.Schema({
   name: { type: String, required: true },
   isActive: { type: Boolean, default: true },
+  price: { type: Number, default: 0 },
   order: { type: Number, default: 0 },
 });
 

@@ -15,6 +15,9 @@ const queueSchema = new mongoose.Schema({
     ref: 'Customer',
     required: true,
   },
+  lineId: {
+    type: String,
+  },
   serviceTypeId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

@@ -10,9 +10,9 @@ const CustomerSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-    customerLineID: {
-        type: String,
-    },
+  customerLineId: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

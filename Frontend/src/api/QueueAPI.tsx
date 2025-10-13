@@ -38,6 +38,17 @@ export const createQueue = async (data: UserBookingProps) => {
       throw error;
     }
   }
+
+  export const getLatestQueue = async () => {
+    try {
+      const response = await axios.get(`/api/queues/latest`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching latest queue:", error);
+      throw error;
+    }
+  };
+
   export const getQueueByMonth = async () => {
     try {
       const response = await axios.get("/api/queues/month/weeks");
@@ -55,6 +66,36 @@ export const createQueue = async (data: UserBookingProps) => {
       return response.data;
     }catch(error){
       console.error("Error fetching queue by ID:", error);
+      throw error;
+    }
+  }
+
+  export const updateQueueStatus = async (id: string, updateData: { status: string; notes?: string; completedAt?: string | null }) => {
+    try {
+      const response = await axios.patch(`/api/queues/${id}/update/status`, updateData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating queue status:", error);
+      throw error;
+    }
+  }
+
+  export const updateQueue = async (id: string, updateData: any) => {
+    try {
+      const response = await axios.put(`/api/queues/update/${id}`, updateData);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating queue:", error);
+      throw error;
+    }
+  }
+
+  export const notifyStatusChange = async (id: string) => {
+    try {
+      const response = await axios.get(`/api/queues/n8n/notify/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error notifying status change:", error);
       throw error;
     }
   }

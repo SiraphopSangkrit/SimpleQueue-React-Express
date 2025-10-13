@@ -53,7 +53,7 @@ class SettingsController {
 
   async createServiceType(req, res) {
     try {
-      const { name, isActive, order } = req.body;
+      const { name, isActive, order, price } = req.body;
 
       if (!name) {
         return res.status(400).json({
@@ -68,6 +68,7 @@ class SettingsController {
         name,
         isActive,
         order,
+        price,
       });
 
       await settings.save();

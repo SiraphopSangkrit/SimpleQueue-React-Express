@@ -1,14 +1,16 @@
 import { Input } from "../../../components/Inputs/Input";
 import { useEffect, useState } from "react";
-import { getSettings,deleteServiceType,addServiceType } from "../../../api/SettingsAPI";
+import {
+  getSettings,
+  deleteServiceType,
+  addServiceType,
+} from "../../../api/SettingsAPI";
 
 export function General() {
   const [appName, setappName] = useState<string>("");
   const [serviceTypesList, setServiceTypesList] = useState<any[]>([]);
   const [serviceType, setServiceType] = useState<string>("");
-
-
-
+  const [servicePrice, setServicePrice] = useState<string>("");
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -27,22 +29,22 @@ export function General() {
     fetchSettings();
   }, []);
 
-const handleAddServiceType = async (e: React.FormEvent) => {
+  const handleAddServiceType = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const newServiceType = { name: serviceType, isActive: true };
+      const newServiceType = { name: serviceType, isActive: true , price: Number(servicePrice) };
       const response = await addServiceType(newServiceType);
       console.log("Service type added successfully:", response);
 
-      setServiceType(""); 
+      setServiceType("");
+      setServicePrice("");
 
-const updatedSettings = await getSettings();
-    setServiceTypesList(updatedSettings.data.serviceTypes || []);
+      const updatedSettings = await getSettings();
+      setServiceTypesList(updatedSettings.data.serviceTypes || []);
     } catch (error) {
       console.error("Error adding service type:", error);
     }
   };
-
 
   const handleDeleteServiceType = async (id: string) => {
     try {
@@ -55,7 +57,7 @@ const updatedSettings = await getSettings();
     } catch (error) {
       console.error("Error deleting service type:", error);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col w-full">
@@ -82,21 +84,31 @@ const updatedSettings = await getSettings();
           </div>
         </form>
 
-        <form className="max-w-3xl flex justify-center items-center mx-auto w-full flex-col gap-3 mt-3" onSubmit={handleAddServiceType}>
-        <div className="w-full">
-        
-          <input
-            className="flex-2 w-full input border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="service type"
-            type="text"
-            value={serviceType}
-               onChange={(e) => setServiceType(e.target.value)}
-            name="servicetypes"
+        <form
+          className="max-w-3xl flex justify-center items-center mx-auto w-full flex-col gap-3 mt-3"
+          onSubmit={handleAddServiceType}
+        >
+          <div className="flex w-full flex-col gap-3">
+            <input
+              className="flex-2 w-full input border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2"
+              placeholder="ประเภทบริการ"
+              type="text"
+              value={serviceType}
+              onChange={(e) => setServiceType(e.target.value)}
+              name="servicetypes"
             ></input>
-           < button className="btn btn-primary mt-3" type="submit">
+            <input
+              className="flex-2 input border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2"
+              placeholder="ราคา"
+              type="number"
+              value={servicePrice}
+              onChange={(e) => setServicePrice(e.target.value)}
+              name="serviceprice"
+            ></input>
+            <button className="btn btn-primary mt-3" type="submit">
               Save Changes
             </button>
-            </div>
+          </div>
           <div className="rounded-lg p-4 w-full shadow-md bg-base-100 max-h-40 overflow-y-scroll">
             <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
               <table className="table">
@@ -104,39 +116,47 @@ const updatedSettings = await getSettings();
                 <thead>
                   <tr>
                     <th></th>
-                    <th>Name</th>
-
-                    <th className="text-center">Status</th>
+                    <th>ชื่อบริการ</th>
+                    <th>ราคา</th>
+                    <th className="text-center">สถานะ</th>
                     <th className="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-           {serviceTypesList.length > 0 ? (
+                  {serviceTypesList.length > 0 ? (
                     serviceTypesList.map((service, index) => (
                       <tr key={service._id}>
                         <th>{index + 1}</th>
                         <td>{service.name}</td>
-                        <td >
+                        <td>{service.price}</td>
+                        <td>
                           <div className="flex justify-center gap-2">
-                          <span className={`badge ${service.isActive ? 'badge-success' : 'badge-error'}`}>
-                            {service.isActive ? 'Active' : 'Inactive'}
-                          </span>
+                            <span
+                              className={`badge ${
+                                service.isActive
+                                  ? "badge-success"
+                                  : "badge-error"
+                              }`}
+                            >
+                              {service.isActive ? "Active" : "Inactive"}
+                            </span>
                           </div>
                         </td>
                         <td>
                           <div className="flex justify-center gap-2">
-                            <button 
+                            <button
                               className="btn btn-primary btn-sm"
                               onClick={() => {
-                           
-                                console.log('Edit service:', service._id);
+                                console.log("Edit service:", service._id);
                               }}
                             >
                               Edit
                             </button>
-                            <button 
+                            <button
                               className="btn btn-error btn-sm"
-                              onClick={() => handleDeleteServiceType(service._id)}
+                              onClick={() =>
+                                handleDeleteServiceType(service._id)
+                              }
                             >
                               Delete
                             </button>

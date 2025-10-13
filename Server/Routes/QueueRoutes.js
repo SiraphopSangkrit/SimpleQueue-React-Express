@@ -14,6 +14,7 @@ router.get('/week/:week/:year', queueController.getQueuesByWeekNumber);
 router.get('/status/:status', queueController.getQueuesByStatus);
 router.get('/month/weeks', queueController.getQueuesByMonthSplitByWeek);
 router.get('/month/iso-weeks', queueController.getQueuesByMonthWithISOWeeks);
+router.get('/latest', queueController.getLatestQueue);
 
 
 // Put parameterized routes AFTER specific routes
@@ -23,6 +24,9 @@ router.put('/update/:id', queueController.updateQueue);
 router.patch('/:id/update/status', queueController.updateQueueStatus);
 router.delete('/delete/:id', queueController.deleteQueue);
 router.get('/', queueController.getAllQueues);
+router.post('/n8n/create', queueController.createQueueByn8n);
+router.get('/n8n/:lineId', queueController.getQueueByLineIdforN8N);
+router.get('/n8n/notify/:id', queueController.notifyStatusChange);
 
 module.exports = router;
 
