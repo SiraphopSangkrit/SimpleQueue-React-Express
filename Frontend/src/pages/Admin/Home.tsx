@@ -94,7 +94,12 @@ useEffect(()=>{
                   <td>{queue.queueId}</td>
                   <td>{queue.customerId.customerName}  {queue.customerId.customerPhone}</td>
                   <td>{queue.status}</td>
-                  <td>{new Date(queue.bookingDate).toLocaleString()}</td>
+                  <td>{new Date(queue.bookingDate).toLocaleDateString('th-TH', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long'
+})}  {queue.timeSlotDetails.Startime} น.</td>
                   <td>{new Date(queue.createdAt).toLocaleString()}</td>
                 </tr>
               ))}
