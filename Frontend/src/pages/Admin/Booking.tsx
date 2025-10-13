@@ -8,12 +8,11 @@ import { Input } from "../../components/Inputs/Input";
 import { BoxSelect } from "../../components/BoxSelect";
 import { Card } from "../../components/Card";
 import { createQueue } from "../../api/QueueAPI";
-import { useNavigate } from "react-router";
 import { getServiceTypes, getTimeSlots } from "../../api/SettingsAPI";
 import { Label } from "../../components/Inputs/Label";
 
 export function Booking() {
-  const navigate = useNavigate();
+ 
   const [value, setValue] = useState<{
     startDate: Date | null;
     endDate: Date | null;
