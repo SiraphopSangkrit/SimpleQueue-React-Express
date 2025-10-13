@@ -962,7 +962,7 @@ class QueueController {
 
       const settings = await SettingModel.getSingle();
 
-      // Fix: updatedQueue is a single document, not an array
+     
       const timeSlotDetails = settings.TimeSlots.id(updatedQueue.timeSlot);
       const serviceTypeDetails = settings.serviceTypes.id(
         updatedQueue.serviceTypeId

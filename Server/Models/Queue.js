@@ -58,10 +58,6 @@ queueSchema.index({ queueId: 1, bookingDate: 1 }, {
   unique: true,
 });
 
-// Make queueNumber unique per date
-queueSchema.index({ queueNumber: 1, bookingDate: 1 }, { 
-  unique: true,
-});
 
 // Update the updatedAt field before saving
 queueSchema.pre('save', function(next) {
