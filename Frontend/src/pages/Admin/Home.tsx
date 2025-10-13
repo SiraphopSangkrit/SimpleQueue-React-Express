@@ -81,6 +81,7 @@ export function Home() {
                 <tr>
                   <th>หมายเลขคิว</th>
                   <th>ชื่อลูกค้า</th>
+                  <th>ประเภทบริการ</th>
                   <th>สถานะ</th>
                   <th>วันที่จอง</th>
                   <th>วันที่สร้างรายการ</th>
@@ -94,6 +95,7 @@ export function Home() {
                       {queue.customerId.customerName}{" "}
                       {queue.customerId.customerPhone}
                     </td>
+                    <td>{queue.serviceType.name}</td>
                     <td>{queue.status}</td>
                     <td>
                       {new Date(queue.bookingDate).toLocaleDateString("th-TH", {
@@ -102,7 +104,7 @@ export function Home() {
                         day: "numeric",
                         weekday: "long",
                       })}{" "}
-                      {queue.timeSlotDetails.StartTime} น.
+                      {queue.timeSlot.StartTime} น.
                     </td>
                     <td>{new Date(queue.createdAt).toLocaleString()}</td>
                   </tr>

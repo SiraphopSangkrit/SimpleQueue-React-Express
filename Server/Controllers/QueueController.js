@@ -266,15 +266,12 @@ class QueueController {
       }
 
       const settings = await SettingModel.getSingle();
-      const timeSlotDetails = settings.TimeSlots.id(latestQueue.timeSlot);
-      const serviceTypeDetails = settings.serviceTypes.id(
-        latestQueue.serviceTypeId
-      );
+   
 
       const latestQueueWithDetails = latestQueue.map((queue) => ({
         ...queue.toObject(),
-        timeSlot: timeSlotDetails,
-        serviceType: serviceTypeDetails,
+        timeSlot: settings.TimeSlots.id(queue.timeSlot),
+        serviceType: settings.serviceTypes.id(queue.serviceTypeId),
       }));
 
       res.status(200).json({
