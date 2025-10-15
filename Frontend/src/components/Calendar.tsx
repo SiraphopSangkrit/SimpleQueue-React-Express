@@ -193,13 +193,13 @@ export function Calendar({data, onDataUpdate}: CalendarProps) {
 
   const calendarEvents = (data || []).map((data) => ({
     id: data._id,
-    title: `คิวที่ ${data.queueNumber} - ${data.customerId.customerName} (${data.serviceTypeDetails.name})`,
+    title: `คิวที่ ${data.queueNumber} - ${data.customerId?.customerName} (${data.serviceTypeDetails?.name})`,
     date: data.bookingDate.split('T')[0],
     color: getColorByStatus(data.status),
     extendedProps: {
       queueNumber: data.queueNumber,
-      customerName: data.customerId.customerName,
-      customerPhone: data.customerId.customerPhone,
+      customerName: data.customerId?.customerName,
+      customerPhone: data.customerId?.customerPhone,
       serviceType: data.serviceTypeDetails,
       timeSlot: data.timeSlot,
       timeSlotDetails: data.timeSlotDetails,

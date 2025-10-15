@@ -22,6 +22,7 @@ export function Home() {
         const latestQueues = await getLatestQueue();
 
         setLatestQueues(latestQueues.data);
+        console.log(latestQueues.data);
       } catch (error) {
         console.error("Error fetching queues:", error);
       }
@@ -92,10 +93,10 @@ export function Home() {
                   <tr key={queue.id}>
                     <td>{queue.queueId}</td>
                     <td>
-                      {queue.customerId.customerName}{" "}
-                      {queue.customerId.customerPhone}
+                      {queue.customerId?.customerName}{" "}
+                      {queue.customerId?.customerPhone}
                     </td>
-                    <td>{queue.serviceType.name}</td>
+                    <td>{queue.serviceType?.name}</td>
                     <td>{queue.status}</td>
                     <td>
                       {new Date(queue.bookingDate).toLocaleDateString("th-TH", {
@@ -104,7 +105,7 @@ export function Home() {
                         day: "numeric",
                         weekday: "long",
                       })}{" "}
-                      {queue.timeSlot.StartTime} น.
+                      {queue.timeSlot?.StartTime} น.
                     </td>
                     <td>{new Date(queue.createdAt).toLocaleString()}</td>
                   </tr>
