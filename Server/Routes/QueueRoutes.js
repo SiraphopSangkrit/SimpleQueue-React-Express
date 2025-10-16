@@ -27,6 +27,7 @@ router.get('/', queueController.getAllQueues);
 router.post('/n8n/create', queueController.createQueueByn8n);
 router.get('/n8n/:lineId', queueController.getQueueByLineIdforN8N);
 router.get('/n8n/notify/:id', queueController.notifyStatusChange);
+router.put('/n8n/:referenceId/:lineId', queueController.getQueueByReferenceId);
 
 module.exports = router;
 

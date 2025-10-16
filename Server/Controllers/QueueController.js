@@ -94,6 +94,7 @@ class QueueController {
       // Generate global queue ID
       const lastQueue = await QueueModel.findOne().sort({ queueId: -1 });
       const queueId = lastQueue ? lastQueue.queueId + 1 : 1;
+       const referenceId = Math.floor(100000 + Math.random() * 900000);
 
       // Generate queue number for the specific date
       const bookingDateObj = new Date(bookingDate);
@@ -132,6 +133,7 @@ class QueueController {
         customerId: customerObject._id,
         serviceTypeId: serviceTypeId,
         bookingDate,
+        referenceId,
         timeSlot,
         notes: notes || "",
       });
@@ -153,7 +155,7 @@ class QueueController {
     }
   }
 
-  // Update queue
+  
   async updateQueue(req, res) {
     try {
       const { id } = req.params;
@@ -849,7 +851,7 @@ class QueueController {
 
       const lastQueue = await QueueModel.findOne().sort({ queueId: -1 });
       const queueId = lastQueue ? lastQueue.queueId + 1 : 1;
-
+      const referenceId = Math.floor(100000 + Math.random() * 900000);
       const bookingDateObj = new Date(bookingDate);
       const startOfDay = new Date(bookingDateObj);
       startOfDay.setHours(0, 0, 0, 0);
@@ -868,7 +870,7 @@ class QueueController {
           ? lastQueueForDate.queueNumber + 1
           : 1;
 
-      const checkCustomer = await CustomerModel.findOne({ customerPhone });
+      const checkCustomer = await CustomerModel.findOneAndUpdate({ customerPhone }, { customerName }, { new: true, upsert: true });
       let customerObject;
       if (checkCustomer) {
         customerObject = checkCustomer;
@@ -886,6 +888,7 @@ class QueueController {
         serviceTypeId: serviceTypeId,
         bookingDate,
         timeSlot,
+        referenceId,
         notes: notes || "",
         lineId,
       });
@@ -913,8 +916,9 @@ class QueueController {
       const queues = await QueueModel.find({ lineId }).populate("customerId");
 
       if (!queues || queues.length === 0) {
-        return res.status(404).json({
-          success: false,
+        return res.status(200).json({
+          success: true,
+          found: false,
           message: "Queue not found",
         });
       }
@@ -934,6 +938,7 @@ class QueueController {
 
       res.status(200).json({
         success: true,
+        found: true,
         data: queuesWithDetails,
       });
     } catch (error) {
@@ -994,6 +999,7 @@ class QueueController {
           serviceTypeId: queueWithDetails.serviceTypeId,
           bookingDate: queueWithDetails.bookingDate,
           timeSlot: queueWithDetails.timeSlot,
+          referenceId: queueWithDetails.referenceId,
           notes: queueWithDetails.notes,
           lineId: queueWithDetails.lineId,
           timeSlotDetails: queueWithDetails.timeSlotDetails,
@@ -1014,6 +1020,42 @@ class QueueController {
       });
     }
   }
+
+  async getQueueByReferenceId(req, res) {
+    try {
+      const { referenceId, lineId } = req.params;
+      const queue = await QueueModel.findOneAndUpdate({ referenceId }, { lineId }, { new: true }).populate("customerId");
+      
+      if (!queue) {
+        return res.status(404).json({
+          success: false,
+          message: "Queue not found",
+        });
+      }
+      const settings = await SettingModel.getSingle();
+      const timeSlotDetails = settings.TimeSlots.id(queue.timeSlot);
+      const serviceTypeDetails = settings.serviceTypes.id(
+        queue.serviceTypeId
+      );
+
+      const queueWithDetails = {
+        ...queue.toObject(),
+        timeSlotDetails: timeSlotDetails || null,
+        serviceTypeDetails: serviceTypeDetails || null,
+      };
+      
+      res.status(200).json({
+        success: true,
+        data: queueWithDetails,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Error fetching queue",
+        error: error.message,
+      });
+    }
+  }     
 }
 
 module.exports = QueueController;

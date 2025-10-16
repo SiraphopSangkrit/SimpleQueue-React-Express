@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # MongoDB Database
@@ -82,6 +82,15 @@ services:
       - mongodb
     networks:
       - simplequeue-network
+
+  redis:
+    image: redis:latest
+    container_name: simplequeue-redis
+    restart: unless-stopped
+    ports:
+        - "6379:6379"
+    networks:
+        - simplequeue-network
 
   # Nginx Reverse Proxy (Optional)
   nginx:

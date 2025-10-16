@@ -8,10 +8,21 @@ import UserLayout from "./layout/UserLayout";
 import { UserBooking } from "./pages/Users/UserBooking";
 import  {General} from "./pages/Admin/Settings/General";
 import { BookingSuccess } from "./pages/Users/QueueSuccess";
+import { Login } from "./pages/Auth/Login";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 const router = createBrowserRouter([
   {
+    path: "/login",
+    element: <Login />,
+    errorElement: <NotFound />,
+  },
+  {
     path: "/",
-    element: <AdminLayout/>,
+    element: (
+      <ProtectedRoute>
+        <AdminLayout/>
+      </ProtectedRoute>
+    ),
     errorElement: <NotFound />,
     children: [
       {

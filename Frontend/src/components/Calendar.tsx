@@ -9,6 +9,7 @@ import { EditBookingModal } from "./Modals/EditBookingModal";
 import { updateQueueStatus, getAllQueues, notifyStatusChange } from "../api/QueueAPI";
 
 
+
 export interface CalendarEvent {
   _id: string;
   customerId: {
@@ -26,6 +27,8 @@ export interface CalendarEvent {
   timeSlotDetails: {
     startTime: string;
   };
+  referenceId: string;
+  notes?: string;
 }
 
 export interface CalendarProps {
@@ -51,7 +54,8 @@ export function Calendar({data, onDataUpdate}: CalendarProps) {
       timeSlotDetails: extendedProps.timeSlotDetails,
       status: extendedProps.status,
       bookingDate: event.start?.toISOString() || '',
-      notes: extendedProps.notes || ''
+      notes: extendedProps.notes || '',
+      referenceId: extendedProps.referenceId || ''
     };
 
     const detailModal = document.getElementById("booking-detail-modal") as HTMLDialogElement;
@@ -61,7 +65,7 @@ export function Calendar({data, onDataUpdate}: CalendarProps) {
       if (modalContent) {
         modalContent.innerHTML = `
           <div class="flex justify-between items-center mb-4">
-            <h1 class="text-lg font-bold">${extendedProps.customerName}</h1>
+            <h1 class="text-lg font-bold">ชื่อ: ${extendedProps.customerName}</h1>
             <button class="btn btn-sm btn-circle btn-ghost close-btn">✕</button>
           </div>
           
@@ -70,6 +74,10 @@ export function Calendar({data, onDataUpdate}: CalendarProps) {
               <div>
                 <p class="font-semibold">คิวที่:</p>
                 <p class="text-2xl font-bold text-primary">${extendedProps.queueNumber}</p>
+              </div>
+              <div>
+                <p class="font-semibold">หมายเลขอ้างอิง:</p>
+                <p class="text-2xl font-bold text-secondary">${extendedProps.referenceId}</p>
               </div>
               <div>
                 <p class="font-semibold">สถานะ:</p>
@@ -193,7 +201,7 @@ export function Calendar({data, onDataUpdate}: CalendarProps) {
 
   const calendarEvents = (data || []).map((data) => ({
     id: data._id,
-    title: `คิวที่ ${data.queueNumber} - ${data.customerId?.customerName} (${data.serviceTypeDetails?.name})`,
+    title: `คิวที่ ${data.queueNumber} - ${data.customerId?.customerName} (${data.serviceTypeDetails?.name}) RefID:${data.referenceId}`,
     date: data.bookingDate.split('T')[0],
     color: getColorByStatus(data.status),
     extendedProps: {
@@ -203,8 +211,9 @@ export function Calendar({data, onDataUpdate}: CalendarProps) {
       serviceType: data.serviceTypeDetails,
       timeSlot: data.timeSlot,
       timeSlotDetails: data.timeSlotDetails,
-      status: data.status
-
+      status: data.status,
+      notes: data.notes || '',
+      referenceId: data.referenceId || ''
 
     }
   }));

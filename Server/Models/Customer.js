@@ -8,10 +8,6 @@ const CustomerSchema = new mongoose.Schema({
   customerPhone: {
     type: String,
     required: true,
-    unique: true,
-  },
-  customerLineId: {
-    type: String,
   },
   createdAt: {
     type: Date,

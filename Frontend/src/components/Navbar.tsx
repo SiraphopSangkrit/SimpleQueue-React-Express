@@ -1,6 +1,14 @@
 import { ThemeToggle } from "./ThemeController";
-
+import { useNavigate } from "react-router";
 export function Navbar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("userRole");
+      localStorage.removeItem("username");
+      navigate("/login", { replace: true });
+    };
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="flex-1">
@@ -16,11 +24,8 @@ export function Navbar() {
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-10 rounded-full">
-              <img
-                alt="Tailwind CSS Navbar component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              />
+            <div className="w-10 rounded-full bg-white">
+              
             </div>
           </div>
           <ul
@@ -28,16 +33,22 @@ export function Navbar() {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a>
+              <p className="justify-between">
+                {localStorage.getItem("email") || "Admin"}
+                
+              </p>
             </li>
             <li>
-              <a>Settings</a>
-            </li>
-            <li>
-              <a>Logout</a>
+               <button 
+            onClick={handleLogout}
+            className="btn btn-outline btn-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            ออกจากระบบ
+          </button>
+             
             </li>
           </ul>
         </div>

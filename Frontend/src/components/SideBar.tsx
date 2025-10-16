@@ -20,6 +20,7 @@ export function SideBar({ isOpen = true, onClose, totalBookings = "" }: SideBarP
   const location = useLocation();
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
 
+
   const toggleDropdown = (label: string) => {
     setOpenDropdowns(prev => 
       prev.includes(label) 
@@ -221,6 +222,7 @@ export function SideBar({ isOpen = true, onClose, totalBookings = "" }: SideBarP
             {menuItems.map(renderMenuItem)}
           </ul>
         </div>
+       
       </div>
     </>
   );
