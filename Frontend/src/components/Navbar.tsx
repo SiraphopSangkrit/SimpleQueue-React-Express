@@ -1,12 +1,11 @@
 import { ThemeToggle } from "./ThemeController";
 import { useNavigate } from "react-router";
+import { logout } from "../api/AuthAPI";
 export function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("userRole");
-      localStorage.removeItem("username");
+      logout();
       navigate("/login", { replace: true });
     };
   return (
@@ -24,7 +23,7 @@ export function Navbar() {
             role="button"
             className="btn btn-ghost btn-circle avatar"
           >
-            <div className="w-10 rounded-full bg-white">
+            <div className="w-10 rounded-full bg-gray-700 dark:bg-white">
               
             </div>
           </div>

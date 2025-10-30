@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+
 const jwt = require('jsonwebtoken');
 const UserModel = require('../Models/User');
 
@@ -163,80 +163,6 @@ class UserController {
             });
         }
     }
-
-    // Login user
-    async loginUser(req, res) {
-        try {
-            const { email, password } = req.body;
-
-            if (!email || !password) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Email and password are required'
-                });
-            }
-
-            const user = await UserModel.findOne({ email });
-            if (!user) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Invalid credentials'
-                });
-            }
-
-            const isPasswordValid = await bcrypt.compare(password, user.password);
-            if (!isPasswordValid) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Invalid credentials'
-                });
-            }
-
-            // Generate JWT token
-            const token = jwt.sign(
-                { userId: user._id, email: user.email, username: user.username },
-                process.env.JWT_SECRET,
-                { expiresIn: '24h' }
-            );
-
-            // Remove password from response
-            const userResponse = user.toObject();
-            delete userResponse.password;
-
-            res.status(200).json({
-                success: true,
-                message: 'Login successful',
-                data: {
-                    user: userResponse,
-                    token
-                }
-            });
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: 'Error during login',
-                error: error.message
-            });
-        }
-    }
-
-    // Logout user
-    async logoutUser(req, res) {
-        try {
-            res.status(200).json({
-                success: true,
-                message: 'Logout successful'
-            });
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: 'Error during logout',
-                error: error.message
-            });
-        }
-    }
-
-    
 }
 
 module.exports = UserController;

@@ -52,7 +52,7 @@ class QueueController {
       const settings = await SettingModel.getSingle();
       const timeSlotDetails = settings.TimeSlots.id(queue.timeSlot);
 
-      // Add time slot details to the response
+   
       const queueWithTimeSlot = {
         ...queue.toObject(),
         timeSlotDetails: timeSlotDetails || null,
@@ -94,7 +94,7 @@ class QueueController {
       // Generate global queue ID
       const lastQueue = await QueueModel.findOne().sort({ queueId: -1 });
       const queueId = lastQueue ? lastQueue.queueId + 1 : 1;
-       const referenceId = Math.floor(100000 + Math.random() * 900000);
+      const referenceId = Math.floor(100000 + Math.random() * 900000);
 
       // Generate queue number for the specific date
       const bookingDateObj = new Date(bookingDate);
@@ -115,18 +115,12 @@ class QueueController {
           ? lastQueueForDate.queueNumber + 1
           : 1;
 
-      const checkCustomer = await CustomerModel.findOne({ customerPhone });
-      let customerObject;
-      if (checkCustomer) {
-        customerObject = checkCustomer;
-      } else {
-        const newCustomer = new CustomerModel({
-          customerName,
-          customerPhone,
-          customerLineId,
-        });
-        customerObject = await newCustomer.save();
-      }
+      const newCustomer = new CustomerModel({
+        customerName,
+        customerPhone,
+      });
+      customerObject = await newCustomer.save();
+
       const newQueue = new QueueModel({
         queueId,
         queueNumber,
@@ -155,7 +149,6 @@ class QueueController {
     }
   }
 
-  
   async updateQueue(req, res) {
     try {
       const { id } = req.params;
@@ -268,7 +261,6 @@ class QueueController {
       }
 
       const settings = await SettingModel.getSingle();
-   
 
       const latestQueueWithDetails = latestQueue.map((queue) => ({
         ...queue.toObject(),
@@ -870,17 +862,13 @@ class QueueController {
           ? lastQueueForDate.queueNumber + 1
           : 1;
 
-      const checkCustomer = await CustomerModel.findOneAndUpdate({ customerPhone }, { customerName }, { new: true, upsert: true });
-      let customerObject;
-      if (checkCustomer) {
-        customerObject = checkCustomer;
-      } else {
-        const newCustomer = new CustomerModel({
-          customerName,
-          customerPhone,
-        });
-        customerObject = await newCustomer.save();
-      }
+      const newCustomer = new CustomerModel({
+        customerName,
+        customerPhone,
+        customerLineId: lineId,
+      });
+      customerObject = await newCustomer.save();
+
       const newQueue = new QueueModel({
         queueId,
         queueNumber,
@@ -967,7 +955,6 @@ class QueueController {
 
       const settings = await SettingModel.getSingle();
 
-     
       const timeSlotDetails = settings.TimeSlots.id(updatedQueue.timeSlot);
       const serviceTypeDetails = settings.serviceTypes.id(
         updatedQueue.serviceTypeId
@@ -1024,8 +1011,18 @@ class QueueController {
   async getQueueByReferenceId(req, res) {
     try {
       const { referenceId, lineId } = req.params;
-      const queue = await QueueModel.findOneAndUpdate({ referenceId }, { lineId }, { new: true }).populate("customerId");
-      
+      const queue = await QueueModel.findOneAndUpdate(
+        { referenceId },
+        { lineId },
+        { new: true }
+      ).populate("customerId");
+
+      const customer = await CustomerModel.findByIdAndUpdate(
+        queue.customerId,
+        { customerLineId: lineId },
+        { new: true }
+      );
+
       if (!queue) {
         return res.status(404).json({
           success: false,
@@ -1034,19 +1031,18 @@ class QueueController {
       }
       const settings = await SettingModel.getSingle();
       const timeSlotDetails = settings.TimeSlots.id(queue.timeSlot);
-      const serviceTypeDetails = settings.serviceTypes.id(
-        queue.serviceTypeId
-      );
+      const serviceTypeDetails = settings.serviceTypes.id(queue.serviceTypeId);
 
       const queueWithDetails = {
         ...queue.toObject(),
         timeSlotDetails: timeSlotDetails || null,
         serviceTypeDetails: serviceTypeDetails || null,
       };
-      
+
       res.status(200).json({
         success: true,
         data: queueWithDetails,
+        customer: customer,
       });
     } catch (error) {
       res.status(500).json({
@@ -1055,7 +1051,7 @@ class QueueController {
         error: error.message,
       });
     }
-  }     
+  }
 }
 
 module.exports = QueueController;

@@ -79,7 +79,14 @@ services:
       - mongodb
     networks:
       - simplequeue-network
-
+  redis:
+    image: redis:latest
+    container_name: simplequeue-redis
+    restart: unless-stopped
+    ports:
+        - "6379:6379"
+    networks:
+        - simplequeue-network
 volumes:
   mongodb_data:
     driver: local

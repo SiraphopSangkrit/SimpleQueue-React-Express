@@ -9,6 +9,9 @@ const CustomerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  customerLineId: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

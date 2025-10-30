@@ -2,8 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Input } from "../../components/Inputs/Input";
 import { Card } from "../../components/Card";
+import { login } from "../../api/AuthAPI";
+import { useTheme } from "../../hooks/useTheme";
+import { ThemeToggle } from "../../components/ThemeController";
 
 export function Login() {
+  // Initialize theme on login page
+  useTheme();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -50,30 +55,20 @@ export function Login() {
     setIsLoading(true);
     setErrors(prev => ({ ...prev, general: "" }));
 
-    setTimeout(() => {
-      setErrors(()=> ({
-        email: "",
-        password: "",
-        general: ""
-      }));
-    }, 5000);
-
     try {
-    
-      // For now, using dummy authentication
-      if (formData.email === "admin@example.com" && formData.password === "password") {
-        // Store token or user data in localStorage
+      const response = await login(formData);
+      
+      if (response.success && response.data) {
+     
         localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("userRole", "admin");
-        localStorage.setItem("email", formData.email);
-
-        // Redirect to admin dashboard
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+    
         navigate("/", { replace: true });
       } else {
-          setErrors(prev => ({
-            ...prev,
-            general: "อีเมลหรือรหัสผ่านไม่ถูกต้อง"
-          }));
+        setErrors(prev => ({
+          ...prev,
+          general: response.message || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ"
+        }));
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -87,7 +82,12 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-base-200 flex items-center justify-center p-4 ">
+      {/* Theme Toggle in top right corner */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      
       <Card className="w-full max-w-md">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-primary">เข้าสู่ระบบ</h1>

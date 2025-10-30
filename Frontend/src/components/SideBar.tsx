@@ -1,6 +1,7 @@
 import { type ReactNode, useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation} from "react-router";
 import {UsersIcon,BookOpenIcon} from "@heroicons/react/24/outline";
+
 
 interface SideBarProps {
   isOpen?: boolean;
@@ -18,7 +19,11 @@ interface MenuItem {
 
 export function SideBar({ isOpen = true, onClose, totalBookings = "" }: SideBarProps) {
   const location = useLocation();
+
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
+
+
+
 
 
   const toggleDropdown = (label: string) => {
@@ -221,7 +226,7 @@ export function SideBar({ isOpen = true, onClose, totalBookings = "" }: SideBarP
           <ul className="menu menu-vertical bg-base-200 w-full p-2">
             {menuItems.map(renderMenuItem)}
           </ul>
-        </div>
+        </div> 
        
       </div>
     </>

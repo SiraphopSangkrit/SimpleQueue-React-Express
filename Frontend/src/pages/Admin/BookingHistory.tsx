@@ -10,7 +10,7 @@ export function Customer() {
       </div>
  
       <div className="w-full">
-        <Table />
+        <Table data={[]} />
       </div>
     </div>
   );

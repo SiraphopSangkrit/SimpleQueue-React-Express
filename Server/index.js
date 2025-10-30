@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const app = express();
 const morgan = require('morgan');
 const port = process.env.PORT || 3000;
@@ -13,17 +14,23 @@ const db = require('./Configs/mongodb');
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cookieParser());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5174',
+  credentials: true 
+}));
 
 app.use(morgan("tiny"));
 // Routes
+const AuthRoutes = require('./Routes/AuthRoutes');
+app.use('/api/auth', AuthRoutes);
+
 const UserRoutes= require('./Routes/UserRoutes');
 app.use('/api/users', UserRoutes);
 const QueueRoutes = require('./Routes/QueueRoutes');
 app.use('/api/queues', QueueRoutes);
 const SettingRoutes = require('./Routes/SettingRoutes');
 app.use('/api/settings', SettingRoutes);
-
 app.use('/api/customers', require('./Routes/CustomerRoutes'));
 
 // Health check endpoint
