@@ -867,12 +867,12 @@ class QueueController {
         customerPhone,
         customerLineId: lineId,
       });
-      customerObject = await newCustomer.save();
+      newCustomer = await newCustomer.save();
 
       const newQueue = new QueueModel({
         queueId,
         queueNumber,
-        customerId: customerObject._id,
+        customerId: newCustomer._id,
         serviceTypeId: serviceTypeId,
         bookingDate,
         timeSlot,
